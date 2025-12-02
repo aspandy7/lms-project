@@ -1,0 +1,5 @@
+.env
+__pycache__
+lms.db
+uploads
+venv
