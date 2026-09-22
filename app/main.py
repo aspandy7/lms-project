@@ -21,14 +21,19 @@ app = FastAPI(
 # Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Подключаем статические файлы
+# Создаем необходимые директории
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "courses"), exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "lessons"), exist_ok=True)
+os.makedirs(os.path.join(settings.UPLOAD_DIR, "scorm"), exist_ok=True)
+
+# Подключаем статические файлы
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 # Подключаем роутеры
@@ -45,27 +50,3 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
-
-# Тестовый эндпоинт для проверки пароля
-@app.post("/test-password")
-async def test_password(password: str):
-    from app.core.security import get_password_hash
-    import sys
-    
-    result = {
-        "password": password,
-        "password_length": len(password),
-        "password_bytes": len(password.encode('utf-8')),
-        "sys_version": sys.version
-    }
-    
-    try:
-        hashed = get_password_hash(password)
-        result["hashed_success"] = True
-        result["hash_length"] = len(hashed)
-    except Exception as e:
-        result["hashed_success"] = False
-        result["error"] = str(e)
-        result["error_type"] = type(e).__name__
-    
-    return result

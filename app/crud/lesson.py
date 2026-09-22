@@ -51,10 +51,29 @@ def create_attachment(db: Session, attachment: LessonAttachmentCreate):
     db.refresh(db_attachment)
     return db_attachment
 
+def get_attachment(db: Session, attachment_id: int):
+    return db.query(LessonAttachment).filter(LessonAttachment.id == attachment_id).first()
+
 def get_attachments(db: Session, lesson_id: int):
     return db.query(LessonAttachment).filter(
         LessonAttachment.lesson_id == lesson_id
     ).all()
+
+def get_attachments_by_type(db: Session, lesson_id: int, file_type: str = None):
+    """Получить вложения по типу файла"""
+    query = db.query(LessonAttachment).filter(LessonAttachment.lesson_id == lesson_id)
+    
+    if file_type == 'image':
+        query = query.filter(LessonAttachment.mime_type.like('image/%'))
+    elif file_type == 'video':
+        query = query.filter(LessonAttachment.is_video == True)
+    elif file_type == 'document':
+        query = query.filter(
+            LessonAttachment.mime_type.like('application/%') | 
+            LessonAttachment.mime_type.like('text/%')
+        ).filter(LessonAttachment.is_video == False)
+    
+    return query.all()
 
 def delete_attachment(db: Session, attachment_id: int):
     db_attachment = db.query(LessonAttachment).filter(
@@ -66,3 +85,10 @@ def delete_attachment(db: Session, attachment_id: int):
         db.commit()
     
     return db_attachment
+
+def get_attachment_by_filename(db: Session, lesson_id: int, filename: str):
+    """Получить вложение по имени файла"""
+    return db.query(LessonAttachment).filter(
+        LessonAttachment.lesson_id == lesson_id,
+        LessonAttachment.file_name == filename
+    ).first()

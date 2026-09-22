@@ -33,6 +33,7 @@ class LessonAttachmentResponse(LessonAttachmentBase):
     id: int
     lesson_id: int
     created_at: datetime
+    file_url: Optional[str] = None  # Добавлено поле для URL
     
     class Config:
         from_attributes = True
@@ -49,3 +50,10 @@ class LessonInDB(LessonBase):
 
 class LessonResponse(LessonInDB):
     attachments: List[LessonAttachmentResponse] = []
+    attachment_count: int = 0
+    
+    @validator('attachment_count', always=True)
+    def compute_attachment_count(cls, v, values):
+        if 'attachments' in values:
+            return len(values['attachments'])
+        return 0

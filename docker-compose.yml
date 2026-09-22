@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi-app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://lms_user:lms_password@db:5432/lms_db
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - app_network
+  frontend:
+    build:
+      context: ../lms-frontend/front
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: lms-postgres
+    environment:
+      POSTGRES_DB: lms_db
+      POSTGRES_USER: lms_user
+      POSTGRES_PASSWORD: lms_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lms_user -d lms_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    name: lms_network
+    driver: bridge
+
+volumes:
+  postgres_data:

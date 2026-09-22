@@ -18,6 +18,7 @@ class Lesson(Base):
     
     # Метаданные для SCORM
     scorm_data = Column(JSON, nullable=True)
+    quiz = relationship("Quiz", back_populates="lesson", uselist=False)
     
     # Отношения
     course = relationship("Course", back_populates="lessons")
