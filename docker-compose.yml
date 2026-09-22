@@ -18,7 +18,7 @@ services:
       - app_network
   frontend:
     build:
-      context: ../lms-frontend/front
+      context: ./lms-frontend
       dockerfile: Dockerfile
     container_name: react-frontend
     ports:

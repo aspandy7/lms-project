@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infotecs Academy</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Tektur:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Montserrat', 'sans-serif'],
+              display: ['Tektur', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                blue: '#1961ac',
+                cyan: '#009fc0',
+                purple: '#8871b1',
+                green: '#d2db5c',
+                dark: '#0f3d6e',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Убираем скролл полностью */
+      html, body {
+        overflow: hidden;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      
+      body {
+        background: linear-gradient(135deg, #1961ac 0%, #009fc0 100%);
+        min-height: 100vh;
+        color: white;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?deps=react@18.2.0,react-dom@18.2.0",
+    "react-markdown": "https://esm.sh/react-markdown@9.0.1?bundle&deps=react@18.2.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Добавляем фоновые изображения после полной загрузки DOM
+      document.addEventListener('DOMContentLoaded', () => {
+        // Создаем контейнер для фоновых изображений
+        const container = document.createElement('div');
+        container.id = 'background-decorations';
+        container.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: -1;
+        `;
+        document.body.appendChild(container);
+        
+        // Устанавливаем фоновое изображение
+        const bgImage = new Image();
+        bgImage.src = 'pngs/background.png';
+        bgImage.onload = function() {
+          document.body.style.background = `url('${bgImage.src}') center/cover no-repeat fixed`;
+        };
+        bgImage.onerror = function() {
+          console.error('Не удалось загрузить фоновое изображение. Используем градиент как резервный вариант.');
+          document.body.style.background = 'linear-gradient(135deg, #1961ac 0%, #009fc0 100%)';
+        };
+
+        // Список изображений из папки pngs
+        const imageNames = [
+          '1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '11.png', '12.png', '13.png', '14.png', '15.png', '16.png', '17.png', '18.png'
+        ];
+        
+        // Количество элементов на странице
+        const itemCount = 5;
+        
+        // Генерируем и добавляем изображения
+        for (let i = 0; i < itemCount; i++) {
+          const img = document.createElement('img');
+          const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
+          const imagePath = `pngs/${randomImage}`;
+          
+          img.src = imagePath;
+          img.alt = '';
+          
+          // Случайные параметры
+          const randomX = Math.random() * 100;
+          const randomY = Math.random() * 100;
+          const randomRotate = Math.random() * 360;
+          const randomSize = Math.random() * 8 + 3; // Размер от 3% до 11%
+          const randomOpacity = 0.3 + Math.random() * 0.4; // Прозрачность от 0.3 до 0.7
+          
+          // Применяем стили
+          img.style.cssText = `
+            position: absolute;
+            opacity: ${randomOpacity};
+            transform-origin: center;
+            top: ${randomY}%;
+            left: ${randomX}%;
+            transform: rotate(${randomRotate}deg);
+            width: ${randomSize}%;
+          `;
+          
+          img.onerror = function() {
+            console.warn(`Изображение не найдено: ${imagePath}. Проверьте наличие файла в папке pngs/`);
+            this.remove();
+          };
+          
+          container.appendChild(img);
+        }
+      });
+    </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
