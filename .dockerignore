@@ -1,0 +1,13 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+uploads/
+*.md
+.env
+lms-frontend/
+node_modules/
+.pytest_cache/
+*.egg-info/
