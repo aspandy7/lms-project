@@ -1,5 +1,6 @@
 
-const BASE_URL = 'http://localhost:8000/api/v1';
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 // Helper to get token
 const getToken = () => localStorage.getItem('access_token');
